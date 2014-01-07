@@ -9,7 +9,7 @@ Copies changed files, preserving structure of folders.
 command line arguments:
 ===
  * -p path   :Path for check
- * -cp path  :Folder for modified files (program directory by default
+ * -cp path  :Folder for modified files (program directory by default)
  * -start    :Start checking after run
  * -log      :Create log file with paths
  * -onlylog  :Create only log file and exit
