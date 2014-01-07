@@ -7,8 +7,11 @@ Simple search for modified files in a directory and subdirectories by date of cr
 Copies changed files, preserving structure of folders.
 
 command line arguments:
--p path   :Path for check
--cp path  :Folder for modified files (program directory by default
--start    :Start checking after run
--log      :Create log file with paths
--onlylog  :Create only log file and exit
+===
+ * -p path   :Path for check
+ * -cp path  :Folder for modified files (program directory by default
+ * -start    :Start checking after run
+ * -log      :Create log file with paths
+ * -onlylog  :Create only log file and exit
+
+[fnf.exe](https://github.com/KIKss/Snf/blob/master/fnf.exe)
