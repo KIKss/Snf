@@ -13,5 +13,3 @@ command line arguments:
  * -start    :Start checking after run
  * -log      :Create log file with paths
  * -onlylog  :Create only log file and exit
-
-[fnf.exe](https://github.com/KIKss/Snf/blob/master/fnf.exe)
