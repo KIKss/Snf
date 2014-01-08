@@ -17,7 +17,7 @@ namespace snf
 			Console.WriteLine("			Search new and modified files in directory");
 			Console.WriteLine("	___________________________________________________________________");
 			Console.WriteLine("	command line arguments:");
-			Console.WriteLine("	-p path   :Path for check");
+			Console.WriteLine("	-p path   :Directory for check");
 			Console.WriteLine("	-cp path  :Folder for modified files (program directory by default)");
 			Console.WriteLine("	-start    :Start checking after run");
 			Console.WriteLine("	-log      :Create log file with paths");
@@ -30,14 +30,14 @@ namespace snf
 				{
 					if (!String.IsNullOrEmpty(args[i + 1]))
 					{
-						Tools.CHDir = args[i + 1];
+						Tools.Checked_dir = args[i + 1];
 					}
 				}
 				if (args[i] == "-cp")
 				{
 					if (!String.IsNullOrEmpty(args[i + 1]))
 					{
-						Tools.SDir = args[i + 1];
+						Tools.Save_dir = args[i + 1];
 					}
 				}
 				
@@ -57,30 +57,29 @@ namespace snf
 				}
 			}
 			
-			if (!Directory.Exists(Tools.CHDir)) {
+			if (!Directory.Exists(Tools.Checked_dir)) {
 				Console.WriteLine(" Error. No folder for checking");
 				Console.WriteLine(" Press any key to exit..");
 				Console.ReadKey(true);
 				return;
 			}
 			
-			Tools.SDir = Tools.SDir+Tools.CHDir.Substring(Tools.CHDir.LastIndexOf(Path.DirectorySeparatorChar));
-			Console.WriteLine(" Checking folder: "+Tools.CHDir);
-			Console.WriteLine(" Save to: "+Tools.SDir+"\n");
-			Tools.DBFile = Environment.CurrentDirectory+
-				Tools.CHDir.Substring(Tools.CHDir.LastIndexOf(Path.DirectorySeparatorChar))+
+			Tools.Save_dir = Tools.Save_dir+Tools.Checked_dir.Substring(Tools.Checked_dir.LastIndexOf(Path.DirectorySeparatorChar));
+			Console.WriteLine(" Checking folder: "+Tools.Checked_dir);
+			Console.WriteLine(" Save to: "+Tools.Save_dir+"\n");
+			Tools.DB_file_name = Environment.CurrentDirectory+
+				Tools.Checked_dir.Substring(Tools.Checked_dir.LastIndexOf(Path.DirectorySeparatorChar))+
 				".data";
 			
-			List<Tools.FDataClass> Base = new List<Tools.FDataClass>();
-			List<Tools.FDataClass> NBase = new List<Tools.FDataClass>();
-			List<string> ToWork = new List<string>();
+			List<Tools.File_Data> Base;
+			List<Tools.File_Data> NBase;
+			List<string> ToWork;
 			
-			if(!(File.Exists(Tools.DBFile)) )
+			if(!(File.Exists(Tools.DB_file_name)) )
 			{
 				Console.WriteLine(" First run. Creating folder image..");
-				Base = Tools.GetDirList();
-				Tools.SaveDB(Base);
-				Console.WriteLine("  Complete. Files found: "+Base.Count);
+				Tools.CreateImage(Tools.Checked_dir);
+				
 			}else{
 				if(autostart){vvd = ConsoleKey.Enter;goto Start;}
 				Console.WriteLine(" Press: ");
@@ -91,44 +90,39 @@ namespace snf
 			Start:
 				switch (vvd) {
 					case ConsoleKey.Enter:
-						Base = Tools.LoadDB(Tools.DBFile);
+						Base = Tools.LoadDB(Tools.DB_file_name);
 						Console.WriteLine(" Checking folder..");
-						NBase = Tools.GetDirList();
-						Tools.FDataClass f;
-						foreach (Tools.FDataClass d in NBase)
-						{
-							f = Base.Find(p => p.Path == d.Path);
-							if(f == null ||f.CHDate != d.CHDate || f.CRDate != d.CRDate)
-							{
-								ToWork.Add(d.Path);
-							}
-						}
+						
+						NBase = Tools.GetDirList(Tools.Checked_dir);
+						
+						ToWork = Tools.CheckDirectories(Base,NBase);
 						
 						if (ToWork.Count != 0) {
 							Console.WriteLine(" Files found: "+ ToWork.Count);
 							
-							string CRPath;
+							
 							
 							if(log || onlylog)
 							{
 								File.WriteAllLines(Environment.CurrentDirectory+
-								                   Tools.CHDir.Substring(Tools.CHDir.LastIndexOf(Path.DirectorySeparatorChar))+
+								                   Tools.Checked_dir.Substring(Tools.Checked_dir.LastIndexOf(Path.DirectorySeparatorChar))+
 								                   ".txt",ToWork);
 								Console.WriteLine(" Log created.");
 								if(onlylog){Tools.SaveDB(NBase);break;}
 							}
 							
-							Console.WriteLine(" Copying new files..");
-							if (Directory.Exists(Tools.SDir))
+							Console.WriteLine(" Copying files..");
+							if (Directory.Exists(Tools.Save_dir))
 							{
-								DirectoryInfo directory = new DirectoryInfo(Tools.SDir);
+								DirectoryInfo directory = new DirectoryInfo(Tools.Save_dir);
 								foreach (System.IO.FileInfo file in directory.GetFiles()) file.Delete();
 								foreach (System.IO.DirectoryInfo subDirectory in directory.GetDirectories()) subDirectory.Delete(true);
 							}
 							
 							foreach (var w in ToWork) {
 								
-								CRPath = Tools.SDir+Path.DirectorySeparatorChar+Path.GetDirectoryName(w.Replace(Tools.CHDir,""));
+								string CRPath;
+								CRPath = Tools.Save_dir+Path.DirectorySeparatorChar+Path.GetDirectoryName(w.Replace(Tools.Checked_dir,""));
 								
 								if (!Directory.Exists(CRPath))
 								{
@@ -148,9 +142,7 @@ namespace snf
 					case ConsoleKey.N://--------------------------------------------------------------
 
 						Console.WriteLine(" Creating folder image..");
-						Base = Tools.GetDirList();
-						Tools.SaveDB(Base);
-						Console.WriteLine(" Complete. Files found: "+Base.Count);
+						Tools.CreateImage(Tools.Checked_dir);
 						break;
 					default:
 						goto TryAgain;
