@@ -30,7 +30,7 @@ namespace snf
 
 			foreach (FileInfo file in dir.GetFiles("*",SearchOption.AllDirectories))
 			{
-				Data.Add(new File_Data(file.FullName,File.GetLastWriteTime(file.FullName),File.GetCreationTime(file.FullName)));
+				Data.Add(new File_Data(file.FullName,file.LastWriteTime,file.CreationTime));
 			}
 			return Data;
 		}
