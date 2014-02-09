@@ -37,7 +37,7 @@ namespace snf
 		
 		public static List<string> CheckDirectories(List<File_Data> _base, List<File_Data> _nbase)
 		{
-			Tools.File_Data f;
+			File_Data f;
 			List<string> towork = new List<string>();
 			Object syn = new object();
 			Parallel.ForEach(_nbase, fd =>
@@ -65,9 +65,9 @@ namespace snf
 		
 		public static void CopyFiles(List<string> _towork,string svdir,string chdir)
 		{
+			string crpath;
 			Parallel.ForEach(_towork, w =>
 			                 {
-			                 	string crpath;
 			                 	crpath = svdir+Path.DirectorySeparatorChar+Path.GetDirectoryName(w.Replace(chdir,""));
 			                 	if (!Directory.Exists(crpath)){Directory.CreateDirectory(crpath);}
 			                 	File.Copy(w,crpath+Path.DirectorySeparatorChar+w.Substring(w.LastIndexOf(Path.DirectorySeparatorChar)));

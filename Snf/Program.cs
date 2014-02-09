@@ -1,21 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 
 namespace snf
 {
+	
 	class Program
 	{
-		public static void Main(string[] args)
+		
+		public static void Main(string[] @args)
 		{
+			Console.Title = "Find new files";
 			ConsoleKey vvd;
 			bool autostart = false;
 			bool onlylog = false;
 			bool log = false;
-			string Checked_dir = "";
+			string Checked_dir = String.Empty;
 			string Save_dir = Environment.CurrentDirectory;
-			string DB_file_name = "";
-			string CRPath;
+			string DB_file_name = String.Empty;
+			//string CRPath;
 			List<Tools.File_Data> Base;
 			List<Tools.File_Data> NBase;
 			List<string> ToWork;
@@ -35,6 +39,7 @@ namespace snf
 			{
 				if (args[i] == "-p")
 				{
+					
 					if (!String.IsNullOrEmpty(args[i + 1]))
 					{
 						Checked_dir = args[i + 1];
@@ -79,14 +84,14 @@ namespace snf
 			
 			if(!(File.Exists(DB_file_name)) )
 			{
-				Console.WriteLine(" First run. Creating folder image..");
+				Console.WriteLine(" New checking directory. Creating folder image..");
 				Tools.CreateImage(Checked_dir,DB_file_name);
 				
 			}else{
 				if(autostart){vvd = ConsoleKey.Enter;goto Start;}
 				Console.WriteLine(" Press: ");
 				Console.WriteLine(" Enter - check folder for changes");
-				Console.WriteLine(" N - Create folder image");
+				Console.WriteLine(" n - Create folder image");
 			TryAgain:
 				vvd = Console.ReadKey(true).Key;
 			Start:
